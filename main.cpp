@@ -50,4 +50,4 @@ float calcularMasa(int16_t datoV ){
     masa = (Vout) / (5.0 * G) ;  // así se pasa el dato a kg
     return masa;  
 }
-   //
+   ////
