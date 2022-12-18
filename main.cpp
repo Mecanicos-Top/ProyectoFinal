@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+
+
+
+
 #include <stdio.h>
 #include "mbed.h"
 #include "Grove_LCD_RGB_Backlight.h"
@@ -13,7 +17,7 @@ Grove_LCD_RGB_Backlight rgbLCD(PB_9,PB_8);
 
  float masa;
  float G=16.0 ; 
- int datoV=60000;
+ int datoV=2000;
  //AnalogIn datoV(A3);
  char masa_pantalla[10];
 
@@ -46,8 +50,8 @@ int main()
 float calcularMasa(int16_t datoV ){
     float masa;
     float Vout ; 
-    Vout = (datoV / 4096.0) * (5000.0) ; // así se obtiene el dato en mV
-    masa = (Vout) / (5.0 * G) ;  // así se pasa el dato a kg
+    Vout = (datoV / 4096.0) * (1000.0) ; // así se obtiene el dato en mV
+    masa = (Vout) / (5.0*G) ;  // así se pasa el dato a kg
     return masa;  
 }
    ////
