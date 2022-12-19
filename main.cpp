@@ -24,6 +24,8 @@ Grove_LCD_RGB_Backlight rgbLCD(PB_9,PB_8);
 
 
 
+
+
 I2C i2c(I2C_SDA, I2C_SCL);
 
 float calcularMasa(int16_t datoV );
