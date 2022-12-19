@@ -11,25 +11,34 @@
 #include "mbed.h"
 #include "Grove_LCD_RGB_Backlight.h"
  
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+
+#include <stdio.h>
+#include "mbed.h"
+#include "Grove_LCD_RGB_Backlight.h"
+ 
 #define WAIT_TIME_MS 500 
 DigitalOut led1(LED1);
 Grove_LCD_RGB_Backlight rgbLCD(PB_9,PB_8);
 
  float masa;
- float G=16.0 ; 
- int datoV=2000;
- //AnalogIn datoV(A3);
+ float G=16.0 ;
+ AnalogIn lectura(A0);
+ AnalogOut alimentacion(A3);
+ AnalogOut alimentacionneg(A2);
+ int datoV;
+ AnalogIn datoV(A3);
  char masa_pantalla[10];
-
-
-
-
 
 
 I2C i2c(I2C_SDA, I2C_SCL);
 
 float calcularMasa(int16_t datoV );
-
+//
  
 int main()
 {
@@ -40,6 +49,7 @@ int main()
         rgbLCD.locate(0,0);
         rgbLCD.print("masa = ");
         rgbLCD.locate(0,1);
+        datoV=lectura.read();
         masa=calcularMasa(datoV);
         sprintf(masa_pantalla, "%f" ,masa);
         rgbLCD.print(masa_pantalla);
@@ -49,6 +59,8 @@ int main()
         thread_sleep_for(WAIT_TIME_MS);
     }
 }
+
+
 //
 //     Esta función calcula el valor en masa en base a la tensión de salida del acondicionamiento de señal
 float calcularMasa(int16_t datoV ){
