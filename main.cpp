@@ -74,7 +74,7 @@ int main()
         rgbLCD.print("Coloquen la carga que pretenden pesar");
         tension=tomaDeDatos();
         calcularMasa(tension);
-        rgbLCD.setRGB(0xff, 0xff, 0xff);                 //set the color 
+        rgbLCD.setRGB(0xff, 0xff, 0xff);    //set the color 
         rgbLCD.locate(0,0);
         rgbLCD.print("masa = ");
         rgbLCD.locate(0,1);
