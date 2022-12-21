@@ -6,7 +6,9 @@
 
 DigitalOut led1(LED1);
 Grove_LCD_RGB_Backlight rgbLCD(PB_9, PB_8);
-
+float dato = 0.0;
+float datoMin = 0.0;
+float datoMax = 0.0;
 float masa;
 AnalogIn datoV(A3);
 DigitalIn boton(D4);
@@ -14,8 +16,6 @@ char masa_pantalla[16];
 float Vout;
 float minimo;
 float maximo;
-float cincuenta;
-float diez;
 float tension;
 int i;
 
@@ -25,48 +25,32 @@ enum estados {
   ajusteMinimo,
   ajusteMaximo,
   Medicion,
-  ajusteCincuenta,
-  ajusteDiez
 } estado;
 
 float tomaDeDatos() {
   float vector[1000];
   int contador = 0;
   float promedio = 0.0;
+  wait_us(100000);
+
   for (i = 1; i <= 1000; i++) {
-    if(datoV.read_voltage()!=0.0&&datoV.read_voltage()!=3.3){
-    vector[i] = datoV.read_voltage();
+
+    promedio = 0.9 * promedio + 0.1 * datoV.read_voltage();
     contador++;
     wait_us(10000);
-    promedio = promedio + vector[i];
-    printf("%f\n",vector[i]);
-    }
   }
 
   promedio = promedio / contador;
-  printf("%d\n%f\n", contador, promedio);
   return promedio;
 }
 
 // Esta función calcula el valor en masa en base a la tensión de salida del
 // acondicionamiento de señal
 float calcularMasa(float Vout) {
-  //masa = (Vout - minimo) * 100 / (maximo - minimo);
-  //if(masa<50){
-   //   masa=(Vout - minimo) * 50 / (cincuenta - minimo);
- // }else if (masa<10) {
- /// masa=(Vout - minimo) * 10 / (diez - minimo);
- // }
- float n100, n50, n10, n, cincuenta100, cincuenta10, a;
-    n100=100/(maximo-minimo);
-    n50=50/(cincuenta-minimo);
-    n10=10/(diez-minimo);
-    n=(n100+n50+n10)/3;
-    cincuenta100=(cincuenta - minimo) * 100 / (maximo - minimo);
-    cincuenta10=(cincuenta - minimo) * 10 / (diez - minimo);
-    cincuenta=(cincuenta+cincuenta100+cincuenta10)/3;
-    a=cincuenta-n*50;
-    masa=(Vout-a)/n;
+
+  masa = (Vout - minimo) * 50 / (maximo - minimo);
+  dato = dato * 0.9 + 0.1 * masa;
+    
   return masa;
 }
 
@@ -82,10 +66,14 @@ void funcionInicial() {
 void funcionAjusteMinimo() {
   // funcionBorrarPantalla();
   rgbLCD.locate(0, 0);
-  rgbLCD.print("Quiten la carga");
+  rgbLCD.print("No coloquen     ");
   rgbLCD.locate(0, 1);
-  rgbLCD.print("de la bascula");
+  rgbLCD.print("ninguna carga   ");
   if (boton == 1) {
+    rgbLCD.locate(0, 0);
+    rgbLCD.print("Calculando...    ");
+    rgbLCD.locate(0, 1);
+    rgbLCD.print("                ");
     minimo = tomaDeDatos();
     estado = ajusteMaximo;
   }
@@ -97,36 +85,16 @@ void funcionAjusteMaximo() {
   rgbLCD.locate(0, 0);
   rgbLCD.print("Coloquen la      ");
   rgbLCD.locate(0, 1);
-  rgbLCD.print("carga de 100 g");
+  rgbLCD.print("carga de 50 g");
   if (boton == 1) {
-
-    maximo = tomaDeDatos();
-    estado = ajusteCincuenta;
-  }
-}
-
-void funcionAjusteCincuenta() {
-  rgbLCD.locate(0, 0);
-  rgbLCD.print("Coloquen la      ");
-  rgbLCD.locate(0, 1);
-  rgbLCD.print("carga de 50 g ");
-  if (boton == 1) {
-    cincuenta = tomaDeDatos();
-    estado = ajusteDiez;
-  }
-}
-
-void funcionAjusteDiez(){
     rgbLCD.locate(0, 0);
-  rgbLCD.print("Coloquen la      ");
-  rgbLCD.locate(0, 1);
-  rgbLCD.print("carga de 10 g ");
-  if (boton == 1) {
-    diez = tomaDeDatos();
+    rgbLCD.print("Calculando...    ");
+    rgbLCD.locate(0, 1);
+    rgbLCD.print("                ");
+    maximo = tomaDeDatos();
     estado = Medicion;
   }
 }
-
 void funcionMedicion() {
   // funcionBorrarPantalla();
   rgbLCD.locate(0, 0);
@@ -134,6 +102,10 @@ void funcionMedicion() {
   rgbLCD.locate(0, 1);
   rgbLCD.print("                ");
   if (boton == 1) {
+    rgbLCD.locate(0, 0);
+    rgbLCD.print("Calculando...    ");
+    rgbLCD.locate(0, 1);
+    rgbLCD.print("                ");
     tension = tomaDeDatos();
     masa = calcularMasa(tension);
     printf("%f", masa);
@@ -171,12 +143,6 @@ int main() {
       break;
     case Medicion:
       funcionMedicion();
-      break;
-    case ajusteCincuenta:
-      funcionAjusteCincuenta();
-      break;
-    case ajusteDiez:
-      funcionAjusteDiez();
       break;
     }
     wait_us(1000);
