@@ -10,6 +10,7 @@ float dato = 0.0;
 float datoMin = 0.0;
 float datoMax = 0.0;
 float masa;
+float masa2;
 AnalogIn datoV(A3);
 DigitalIn boton(D4);
 char masa_pantalla[16];
@@ -17,7 +18,11 @@ float Vout;
 float minimo;
 float maximo;
 float tension;
+float tension2;
 int i;
+float resolucion = 10.0; // error admisible en porcentaje
+float error = resolucion;
+Timer timer;
 
 I2C i2c(I2C_SDA, I2C_SCL);
 enum estados {
@@ -50,7 +55,7 @@ float calcularMasa(float Vout) {
 
   masa = (Vout - minimo) * 50 / (maximo - minimo);
   dato = dato * 0.9 + 0.1 * masa;
-    
+
   return masa;
 }
 
@@ -94,7 +99,8 @@ void funcionAjusteMaximo() {
     maximo = tomaDeDatos();
     estado = Medicion;
   }
-}
+}  
+
 void funcionMedicion() {
   // funcionBorrarPantalla();
   rgbLCD.locate(0, 0);
@@ -106,8 +112,15 @@ void funcionMedicion() {
     rgbLCD.print("Calculando...    ");
     rgbLCD.locate(0, 1);
     rgbLCD.print("                ");
-    tension = tomaDeDatos();
-    masa = calcularMasa(tension);
+    timer.reset();
+    timer.start();
+    while (error >= resolucion||timer.read()>60.0) {
+      tension = tomaDeDatos();
+      masa = calcularMasa(tension);
+      tension2 = tomaDeDatos();
+      masa2 = calcularMasa(tension2);
+      error = (masa2 - masa) / masa * 100.0;
+    }
     printf("%f", masa);
     sprintf(masa_pantalla, "%f", masa);
     printf(masa_pantalla);
