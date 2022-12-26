@@ -1,7 +1,7 @@
 
 #include "Grove_LCD_RGB_Backlight.h"
 #include "mbed.h"
-
+ 
 //Definición de las variables y las entradas y salidas de datos
 Grove_LCD_RGB_Backlight rgbLCD(PB_9, PB_8);
 float dato = 0.0;
