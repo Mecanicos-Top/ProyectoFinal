@@ -124,7 +124,7 @@ void funcionMedicion() { //una vez asignadas las tensiones máximas y minimas, s
     rgbLCD.print(masa_pantalla);
     rgbLCD.locate(15, 1);
     rgbLCD.print("g");
-    wait_us(10000000); //se espera 10 segundos para poder volver a realizar una medidición 
+    wait_us(10000000); //se esperan 10 segundos para poder volver a realizar una medidición 
   }
 }
 
