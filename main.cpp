@@ -111,15 +111,8 @@ void funcionMedicion() { //una vez asignadas las tensiones máximas y minimas, s
     rgbLCD.print("                ");
     timer.reset();
     timer.start(); //se inicia un temporizador
-    while (error >= resolucion||timer.read()<60.0) { //este while hace repetir el proceso hasta que la diferencia entre una medición y
-    //otra realizada despues sea menor al error asignado en la definición de variables en procentaje, si el error es mayor a dicho porcentaje
-    //se vuelve a realizar la medición hasta que se cumpla, o haya pasado 1 min 
-      tension = tomaDeDatos();
-      masa = calcularMasa(tension);
-      tension2 = tomaDeDatos();
-      masa2 = calcularMasa(tension2);
-      error = (masa2 - masa) / masa * 100.0;
-    }
+    tension = tomaDeDatos();
+    masa = calcularMasa(tension);
     printf("%f", masa);
     sprintf(masa_pantalla, "%f", masa); //el valor medido se transforma en char para poder pasarlo por la pantalla
     printf(masa_pantalla);
